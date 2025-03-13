@@ -1,13 +1,13 @@
 
 
----
 
-```markdown
+
 # Next.js App with Wallet Integration
 
-This project is a Next.js template built with Tailwind CSS that integrates **AppKit** and **Wagmi** for wallet connectivity. It supports two connection methods:
+This project is a Next.js template built with Tailwind CSS that integrates **AppKit** and **Wagmi** for wallet connectivity. It supports three connection methods:
 - **WalletConnect (Polkadot)** – Connect using a Polkadot-compatible wallet via WalletConnect.
 - **MetaMask (Ethereum)** – Connect using MetaMask to get an Ethereum address.
+- **Reactive DOT (DOTConnect)** – Connect your Polkadot wallet using Reactive DOT via a lightweight WebSocket-based light client provider.
 
 This template uses **pnpm** as the package manager.
 
@@ -17,15 +17,10 @@ This template uses **pnpm** as the package manager.
 - **Wallet Integration:**
   - **WalletConnect for Polkadot:** Scan a QR code to connect a Polkadot wallet.
   - **MetaMask for Ethereum:** Directly connect and retrieve your Ethereum address.
+  - **Reactive DOT (DOTConnect):** Securely connect your Polkadot wallet through a lightweight, WebSocket-based light client provider.
 - **AppKit + Wagmi:** Easily integrate blockchain connectivity.
 - Lightweight and modular structure for further customization.
 
-## Requirements
-
-- Node.js (v14 or higher)
-- pnpm (preferred package manager)
-- Google Chrome (recommended for MetaMask support)
-- (Optional) Disable Talisman extension if it interferes with WalletConnect for Polkadot
 
 ## Installation
 
@@ -42,21 +37,6 @@ This template uses **pnpm** as the package manager.
    pnpm install
    ```
 
-3. **Configure Environment (if needed):**
-
-   If your project requires any environment variables (e.g., API keys or custom configuration), create a `.env` file in the root directory. (The current template may not need extra configuration.)
-
-## Development
-
-To run the project in development mode:
-
-```bash
-pnpm dev
-```
-
-Open your browser and navigate to [http://localhost:3000](http://localhost:3000) to view the application.
-
-## Wallet Integration Details
 
 ### WalletConnect (Polkadot)
 
@@ -72,52 +52,15 @@ Open your browser and navigate to [http://localhost:3000](http://localhost:3000)
 - **Setup:**
   Make sure MetaMask is installed in your browser. You can download it from the [Chrome Web Store](https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn).
 
-## Project Structure
+### Reactive DOT (DOTConnect)
 
-- **`pages/_app.tsx`**
-  Contains global providers (Wagmi and AppKit) and configuration.
+Reactive DOT uses DOTConnect to securely connect your Polkadot wallet via a lightweight WebSocket-based light client provider. This integration offers an alternative method to connect your wallet without the need for a full node.
 
-- **`pages/index.tsx`**
-  The main landing page that renders the wallet connection component.
+- **What It Connects:**
+  Enables connection to your Polkadot wallet for secure blockchain interactions through DOTConnect.
 
-- **`components/ConnectWallet.tsx`**
-  Implements the UI and logic for wallet connectivity, including both Polkadot (WalletConnect) and MetaMask (Ethereum).
+- **How It Works:**
+  The integration leverages a light client approach that establishes a connection over WebSockets. The connection is initialized by importing your Reactive DOT configuration (in `reactiveDot.ts`) and rendered using the `ConnectionButton` component from `dot-connect/react.js`.
 
-- **`lib/walletConnect.ts`**
-  Contains helper functions for initializing WalletConnect provider and connecting wallets.
-
-- **`tailwind.config.ts` & `globals.css`**
-  Tailwind and global styling configuration.
-
-## Building and Deployment
-
-To build the project for production:
-
-```bash
-pnpm build
-```
-
-Then start the production server:
-
-```bash
-pnpm start
-```
-
-Ensure any required environment variables are set in production.
-
-## License
-
-Specify your project's license here (e.g., MIT).
-
-## Contributing
-
-Feel free to open issues or submit pull requests if you have suggestions or improvements.
-
-## Contact
-
-For further questions or support, please contact [Your Name/Email] or visit the repository at `<repository_url>`.
-```
-
----
-
-This README provides a clear overview of the project, installation steps, wallet integration details, and project structure. Adjust any sections (like repository URL, contact info, and license) as needed for your project.
+- **Bundle Size Impact:**
+  Integrating DOTConnect results in an increase in bundle size. In our tests, the first load JavaScript size for the home page increased from approximately **269 kB** to **325 kB** (an increase of **56 kB**), and the shared JS bundle grew from about **95.6 kB** to **313 kB** (an increase of roughly **217 kB**). Overall, the bundle size increased by approximately **273 kB**.

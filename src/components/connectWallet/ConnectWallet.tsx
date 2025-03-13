@@ -10,6 +10,7 @@ declare global {
   }
 }
 import { initWalletConnectProvider, connectWallet } from '@/lib/walletConnect'
+import { ConnectionButton } from 'dot-connect/react.js'
 
 export function ConnectWallet() {
   const [account, setAccount] = useState<string | null>(null)
@@ -68,6 +69,10 @@ export function ConnectWallet() {
       >
         {loading ? 'Connecting...' : 'Connect Wallet (MetaMask)'}
       </button>
+      <div>
+        <h2 className="text-xl font-bold">Reactive DOT</h2>
+        <ConnectionButton />
+      </div>
       {account && <p className="mt-2 text-lg text-green-300">Connected Account: {account}</p>}
     </div>
   )

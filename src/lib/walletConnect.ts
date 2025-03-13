@@ -1,7 +1,7 @@
 import UniversalProvider from '@walletconnect/universal-provider'
 import { WalletConnectModal } from '@walletconnect/modal'
 
-const PROJECT_ID = '26af446a7215d912f661bf501be45aa0' // замените на ваш projectId
+export const PROJECT_ID = '26af446a7215d912f661bf501be45aa0' // замените на ваш projectId
 
 // Инициализация провайдера
 export async function initWalletConnectProvider() {
