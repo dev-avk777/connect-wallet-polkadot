@@ -35,6 +35,7 @@
     "@subwallet-connect/injected-wallets": "^1.0.8",
     "@subwallet-connect/subwallet": "^1.0.8",
     "@subwallet-connect/subwallet-polkadot": "^1.0.8",
+    "@talismn/connect-wallets": "^1.2.8",
     "@tanstack/react-query": "^5.67.2",
     "@walletconnect/modal": "^2.7.0",
     "@walletconnect/universal-provider": "^2.19.0",

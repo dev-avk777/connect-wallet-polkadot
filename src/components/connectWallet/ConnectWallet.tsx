@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-// Extend the Window interface to include the ethereum property
+// Расширяем интерфейс Window для поддержки ethereum
 declare global {
   interface Window {
     ethereum?: {
@@ -12,15 +12,16 @@ declare global {
 import { initWalletConnectProvider, connectWallet } from '@/lib/walletConnect'
 import { ConnectionButton } from 'dot-connect/react.js'
 
-// Импортируем модули SubConnect
+// Импорт для SubConnect
 import Onboard from '@subwallet-connect/core'
 import injectedModule from '@subwallet-connect/injected-wallets'
 import subwalletModule from '@subwallet-connect/subwallet'
 import subwalletPolkadotModule from '@subwallet-connect/subwallet-polkadot'
-// При необходимости можно импортировать ethers или другие библиотеки
 
-// Константы для инициализации SubConnect
-const MAINNET_RPC_URL = 'https://mainnet.infura.io/v3/<INFURA_KEY>' // замените <INFURA_KEY>
+// Импорт Talisman SDK
+import { getWallets } from '@talismn/connect-wallets'
+
+const MAINNET_RPC_URL = 'https://mainnet.infura.io/v3/af35059548bb4f3fb28ac65aff6f8a65' // Замените <INFURA_KEY> на свой ключ
 
 const injected = injectedModule()
 const subwalletWallet = subwalletModule()
@@ -93,19 +94,43 @@ export function ConnectWallet() {
       const wallets = await onboard.connectWallet()
       const wallet = wallets[0]
       if (wallet) {
-        // Определяем тип кошелька и извлекаем адрес
         if (wallet.type === 'evm') {
-          // Для Ethereum-кошельков
           const accounts = (await wallet.provider.request({ method: 'eth_accounts' })) as string[]
           setAccount(accounts[0] || null)
         } else if (wallet.type === 'substrate') {
-          // Для Substrate-кошельков
           const address = wallet.accounts && wallet.accounts[0]?.address
           setAccount(address || null)
         }
       }
     } catch (err) {
       console.error('Ошибка подключения через SubConnect:', err)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Подключение через Talisman
+  const handleConnectTalisman = async () => {
+    try {
+      setLoading(true)
+      // Получаем список установленных кошельков
+      const installedWallets = getWallets().filter(wallet => wallet.installed)
+      // Ищем кошелёк Talisman
+      const talismanWallet = installedWallets.find(wallet => wallet.extensionName === 'talisman')
+      if (!talismanWallet) {
+        alert('Кошелёк Talisman не найден. Пожалуйста, установите Talisman.')
+        return
+      }
+      // Включаем кошелёк
+      await talismanWallet.enable('myCoolDapp')
+      talismanWallet.subscribeAccounts(accounts => {
+        console.log('Получены аккаунты', accounts)
+        if (accounts && accounts.length > 0) {
+          setAccount(accounts[0].address)
+        }
+      })
+    } catch (err) {
+      console.error('Ошибка подключения через Talisman:', err)
     } finally {
       setLoading(false)
     }
@@ -118,14 +143,14 @@ export function ConnectWallet() {
         onClick={handleConnectPolkadot}
         disabled={loading}
       >
-        {loading ? 'Connecting...' : 'Connect Wallet (Polkadot)'}
+        {loading ? 'Подключение...' : 'Подключить кошелёк (Polkadot)'}
       </button>
       <button
         className="bg-green-500 hover:bg-green-600 text-white font-semibold px-4 py-2 rounded"
         onClick={handleConnectMetaMask}
         disabled={loading}
       >
-        {loading ? 'Connecting...' : 'Connect Wallet (MetaMask)'}
+        {loading ? 'Подключение...' : 'Подключить кошелёк (MetaMask)'}
       </button>
       <div>
         <h2 className="text-xl font-bold">Reactive DOT</h2>
@@ -136,9 +161,16 @@ export function ConnectWallet() {
         onClick={handleConnectSubWallet}
         disabled={loading}
       >
-        {loading ? 'Connecting...' : 'Connect Wallet (SubConnect)'}
+        {loading ? 'Подключение...' : 'Подключить кошелёк (SubConnect)'}
       </button>
-      {account && <p className="mt-2 text-lg text-green-300">Connected Account: {account}</p>}
+      <button
+        className="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold px-4 py-2 rounded"
+        onClick={handleConnectTalisman}
+        disabled={loading}
+      >
+        {loading ? 'Подключение...' : 'Подключить кошелёк (Talisman)'}
+      </button>
+      {account && <p className="mt-2 text-lg text-green-300">Подключённый аккаунт: {account}</p>}
     </div>
   )
 }
